@@ -17,7 +17,7 @@ public class RubyExtensionFinder extends ExtensionFinder {
 	ScriptingContainer jruby = new ScriptingContainer();
 
 	public <T> Collection<ExtensionComponent<T>> find(Class<T> tClass, Hudson hudson) {
-		System.out.printf("find(%s)\n", tClass.getName());
+		jruby.runScriptlet(String.format("puts 'find(%s)'", tClass.getName()));
 		return new ArrayList<ExtensionComponent<T>>();
 	}
 }
