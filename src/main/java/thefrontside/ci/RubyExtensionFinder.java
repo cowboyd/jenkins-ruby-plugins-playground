@@ -7,13 +7,16 @@ import hudson.tasks.Builder;
 import hudson.model.Hudson;
 import hudson.model.Descriptor;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 
+import net.sf.json.JSONObject;
 import org.jruby.embed.ScriptingContainer;
 import org.jruby.embed.EmbedEvalUnit;
+import org.kohsuke.stapler.StaplerRequest;
 
 
 @Extension
@@ -42,7 +45,13 @@ public class RubyExtensionFinder extends ExtensionFinder {
 			return "Say Hello From Ruby!";
 		}
 
-		private static Class<? extends Builder> getRubyClass() {
+        @Override
+        public Builder newInstance(StaplerRequest req, JSONObject formData) throws FormException {
+            // TODO: this is where you'd create an object by yourself
+            return super.newInstance(req, formData);
+        }
+
+        private static Class<? extends Builder> getRubyClass() {
 			System.out.println("Loading the JRuby Descriptor");
 			ScriptingContainer jruby = new ScriptingContainer();
 			jruby.setClassLoader(jruby.getClass().getClassLoader());
@@ -50,7 +59,8 @@ public class RubyExtensionFinder extends ExtensionFinder {
 			System.out.println("script = " + script);
 			Class<? extends Builder> rubyClass = (Class<? extends Builder>) jruby.runScriptlet(script, "hello_world_builder.rb");
 
-			for	(Method method rubyClass.getMethods()) {
+			for	(Method method : rubyClass.getMethods()) {
+                System.out.println(method.getName()+ Arrays.asList(method.getParameterTypes()));
 
 			}
 
