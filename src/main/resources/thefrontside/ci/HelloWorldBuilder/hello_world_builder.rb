@@ -20,9 +20,8 @@ class RubyHelloWorldBuilder < Java::HudsonTasks::Builder
   #add_method_annotation("super", org.kohsuke.stapler.DataBoundConstructor => {})
   add_method_annotation("initialize", org.kohsuke.stapler.DataBoundConstructor => {})
   add_method_annotation("perform", java.lang.Override => {})
-  self.become_java!
 end
-RubyHelloWorldBuilder.java_class
+RubyHelloWorldBuilder.become_java!('.')
 rescue Exception => e
   puts "#{e.message}\n#{e.backtrace.join("\n")}"
 end

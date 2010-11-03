@@ -47,8 +47,18 @@ public class RubyExtensionFinder extends ExtensionFinder {
 
         @Override
         public Builder newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-            // TODO: this is where you'd create an object by yourself
-            return super.newInstance(req, formData);
+			try {
+				return clazz.newInstance();
+			} catch (InstantiationException e) {
+				e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+				throw new RuntimeException("Failed to instantiate ruby class",e);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+				throw new RuntimeException("Failed to instantiate ruby class", e);
+			}
+
+			// TODO: this is where you'd create an object by yourself
+            //return super.newInstance(req, formData);
         }
 
         private static Class<? extends Builder> getRubyClass() {
