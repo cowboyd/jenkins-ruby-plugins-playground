@@ -3,19 +3,25 @@ package thefrontside.ci;
 import hudson.ExtensionFinder;
 import hudson.ExtensionComponent;
 import hudson.Extension;
+import hudson.Launcher;
 import hudson.tasks.Builder;
 import hudson.model.Hudson;
 import hudson.model.Descriptor;
+import hudson.model.AbstractBuild;
+import hudson.model.BuildListener;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.io.InputStream;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Constructor;
 
 import net.sf.json.JSONObject;
 import org.jruby.embed.ScriptingContainer;
 import org.jruby.embed.EmbedEvalUnit;
+import org.jruby.RubyObject;
 import org.kohsuke.stapler.StaplerRequest;
 
 
@@ -34,11 +40,35 @@ public class RubyExtensionFinder extends ExtensionFinder {
 		return new ArrayList<ExtensionComponent<T>>();
 	}
 
+
+
+	public static class JRubyHelloWorldBuilderDelegate extends Builder {
+		private transient ScriptingContainer jruby;
+		private transient RubyObject rubyObject;
+
+		public JRubyHelloWorldBuilderDelegate(ScriptingContainer jruby, RubyObject object) {
+			this.jruby = jruby;
+			this.rubyObject = object;
+		}
+
+		@Override
+		public boolean perform(AbstractBuild<?, ?> build, Launcher launcher, BuildListener listener) throws InterruptedException, IOException {
+			return (Boolean)jruby.callMethod(rubyObject, "perform", build, launcher, listener);
+		}
+	}
+
 	@Extension
 	public static class RubyHelloWorldDescriptor extends Descriptor<Builder> {
+		private static ScriptingContainer jruby;
+		private Object rubyClass;
 
 		public RubyHelloWorldDescriptor() {
-			super(getRubyClass());
+			super(JRubyHelloWorldBuilderDelegate.class);
+			jruby = new ScriptingContainer();
+			jruby.setClassLoader(jruby.getClass().getClassLoader());
+			InputStream script = HelloWorldBuilder.class.getResourceAsStream("HelloWorldBuilder/hello_world_builder.rb");
+			System.out.println("script = " + script);
+			rubyClass = jruby.runScriptlet(script, "hello_world_builder.rb");
 		}
 
 		public String getDisplayName() {
@@ -47,37 +77,7 @@ public class RubyExtensionFinder extends ExtensionFinder {
 
         @Override
         public Builder newInstance(StaplerRequest req, JSONObject formData) throws FormException {
-			try {
-				return clazz.newInstance();
-			} catch (InstantiationException e) {
-				e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-				throw new RuntimeException("Failed to instantiate ruby class",e);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-				throw new RuntimeException("Failed to instantiate ruby class", e);
-			}
-
-			// TODO: this is where you'd create an object by yourself
-            //return super.newInstance(req, formData);
+			return new JRubyHelloWorldBuilderDelegate(jruby, (RubyObject) jruby.callMethod(rubyClass, "new"));
         }
-
-        private static Class<? extends Builder> getRubyClass() {
-			System.out.println("Loading the JRuby Descriptor");
-			ScriptingContainer jruby = new ScriptingContainer();
-			jruby.setClassLoader(jruby.getClass().getClassLoader());
-			InputStream script = HelloWorldBuilder.class.getResourceAsStream("HelloWorldBuilder/hello_world_builder.rb");
-			System.out.println("script = " + script);
-			Class<? extends Builder> rubyClass = (Class<? extends Builder>) jruby.runScriptlet(script, "hello_world_builder.rb");
-
-			for	(Method method : rubyClass.getMethods()) {
-                System.out.println(method.getName()+ Arrays.asList(method.getParameterTypes()));
-
-			}
-
-			System.out.println("rubyClass = " + rubyClass);
-			return rubyClass;
-		}
-
-
 	}
 }
