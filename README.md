@@ -1,33 +1,33 @@
 
 # Extend Hudson CI with JRuby
 
-Currently there isn't much here beyond the standard Hello World Plugin. That's mostly because we've been 
-familiarizing ourselves with the Hudson [extension mechanisms](http://wiki.hudson-ci.org/display/HUDSON/Extension+points) that are available
+This is an experimental playground for testing hudson and jruby integration.
 
-Currently, it seems like the most promising tack is to bundle a custom [ExtensionFinder](http://hudson-ci.org/javadoc/index.html?hudson/ExtensionFinder.html). This would be our bootstrap class implemented
-in Java  which can instantiate a jruby interpreter and load instances of the desired extension points in ruby.
+At present, implements the following ruby class as a hudson builder:
 
-## Next Steps
-Before coming up with a fully generic mechanism, I'm going to try and re-implement the HelloWorldBuilder in jruby, including
+    class RubyHelloWorldBuilder < Hudson::Builder
 
-* Implementation
-* Descriptor
-* global config
-* field config
+      def perform(build, launcher, listener)
+        listener.getLogger().println("Hello From Ruby Land!");
+        true
+      end
 
-Once the class is converted to ruby, then we'll look to using something other than Jelly to extend the forms. maybe erb, mustache
-liquid or just builder.
+    end
 
-## Questions
+# Hacking
 
-* If every plugin gets its own JRuby interpreter, and every plugin is loaded in its own ClassLoader. Is that going to release
-the proverbial memory Kraken?
-* How can we replace the current plugin development with Rake, so that it's more like
-  * hudson plugin --init     #(generates Rakefile)
-  * rake package             #builds.hpi
-  
-## Random Thoughts
+to run, you need a the plugin development maven setup. To summarize, add the following to `~/.m2/settings.xml`
 
-* It would be nice to use bundler to install all plugins required gems into the generated .hpi file
+    <settings>
+      <pluginGroups>
+        <pluginGroup>org.jvnet.hudson.tools</pluginGroup>
+      </pluginGroups>
+    </settings>
 
+check it out and run it:
 
+    git clone git://github.com/cowboyd/ruby.hpi.git
+    cd ruby.hpi
+    mvn hpi:run
+
+please record your findings on the wiki.
