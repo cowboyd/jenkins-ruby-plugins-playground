@@ -1,18 +1,11 @@
 
-# Extend Hudson CI with JRuby
+# Provision Hudson Slave Nodes with Fog (formerly hello world in ruby)
 
-This is an experimental playground for testing hudson and jruby integration.
+This hudson plugin will allow you to spin up hudson slave nodes on-demand using the [Fog](http://github.com/geemus/fog)
+ruby library.
 
-At present, implements the following ruby class as a hudson builder:
-
-    class RubyHelloWorldBuilder < Hudson::Builder
-
-      def perform(build, launcher, listener)
-        listener.getLogger().println("Hello From Ruby Land!");
-        true
-      end
-
-    end
+It addresses my immediate need for a cloud plugin that I can maintain, but it also serves as a template / proving ground for
+authoring hudson plugins in ruby.
 
 # Hacking
 
@@ -26,8 +19,6 @@ to run, you need a the plugin development maven setup. To summarize, add the fol
 
 check it out and run it:
 
-    git clone git://github.com/cowboyd/ruby.hpi.git
-    cd ruby.hpi
+    git clone git://github.com/cowboyd/fog.hpi.git
+    cd fog.hpi
     mvn hpi:run
-
-please record your findings on the wiki.

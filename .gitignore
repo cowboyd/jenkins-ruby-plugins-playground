@@ -1,5 +1,4 @@
+fog.iml
+.idea/
 target/
 work/
-*.ipr
-*.iml
-*.iws
