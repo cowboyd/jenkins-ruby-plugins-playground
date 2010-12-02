@@ -1,8 +1,3 @@
-<!--
-  This view is used to render the plugin list page.
-
-  Since we don't really have anything dynamic here, let's just use static HTML. 
--->
 <div>
-  This plugin is a sample plugin to explain how to write a Hudson plugin.
+  This plugin integrates Hudson with the Ruby cloud computing library, <a href="https://github.com/geemus/fog">fog</a>.
 </div>

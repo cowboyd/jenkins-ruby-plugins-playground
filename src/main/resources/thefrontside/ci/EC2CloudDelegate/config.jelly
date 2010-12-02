@@ -1,15 +1,47 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <!--
-    This jelly script is used for per-project configuration.
-
-    See global.jelly for a general discussion about jelly script.
-  -->
-
-  <!--
-    Creates a text field that shows the value of the "name" property.
-    When submitted, it will be passed to the corresponding constructor parameter.
-  -->
-  <f:entry title="Name" field="name">
+  <f:entry title="${%Region}" field="region">
+    <f:enum>${it.displayName}</f:enum>
+  </f:entry>
+  <f:entry title="${%Access Key ID}" field="accessId">
     <f:textbox />
+  </f:entry>
+  <f:entry title="${%Secret Access Key}" field="secretKey">
+    <f:password />
+  </f:entry>
+  <f:entry title="${%EC2 RSA Private Key}" field="privateKey">
+    <f:textarea />
+  </f:entry>
+  <f:validateButton title="${%Test Connection}" progress="${%Testing...}" method="testConnection" with="region,secretKey,accessId,privateKey" />
+    
+  <f:entry title="${%AMIs}" description="${%List of AMIs to be launched as slaves}">
+    <f:repeatable field="templates">
+      <table width="100%">
+        <f:entry title="${%AMI ID}" field="ami">
+          <f:textbox />
+        </f:entry>
+        <f:validateButton title="${%Check AMI}" progress="${%Checking...}" method="validateAmi" with="secretKey,accessId,ec2EndpointUrl,ami" />
+        <f:entry title="${%Instance Type}" help="/plugin/ec2/help/instanceType.html">
+          <f:enum field="flavor">${it.name()}</f:enum>
+        </f:entry>
+        <f:entry title="${%Description}" help="/help/system-config/master-slave/description.html" field="description">
+          <f:textbox />
+        </f:entry>
+        <f:entry title="${%Remote FS root}" field="remoteFS">
+          <f:textbox />
+        </f:entry>
+        <f:entry title="${%Remote user}" field="remoteAdmin">
+          <f:textbox />
+        </f:entry>
+        <f:entry title="${%Labels}" field="labelString">
+          <f:textbox />
+        </f:entry>
+
+        <f:entry title="">
+          <div align="right">
+            <f:repeatableDeleteButton />
+          </div>
+        </f:entry>
+      </table>
+    </f:repeatable>
   </f:entry>
 </j:jelly>

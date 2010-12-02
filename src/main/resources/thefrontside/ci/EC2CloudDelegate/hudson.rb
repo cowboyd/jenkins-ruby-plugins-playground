@@ -1,7 +1,5 @@
 
 module Hudson
-
-
   class Cloud
 
    # Provisions new {@link Node}s from this cloud.
@@ -55,5 +53,15 @@ module Hudson
       end
     end
 
+  end
+
+  class Slave
+    def provision(listener)
+      raise "must implement provision()"
+    end
+
+    def attach(instanceId, listener)
+      raise "must implement attach()"
+    end
   end
 end
