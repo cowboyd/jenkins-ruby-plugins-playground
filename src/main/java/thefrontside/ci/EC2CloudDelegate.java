@@ -19,8 +19,8 @@ import java.util.List;
 
 public class EC2CloudDelegate extends Cloud  {
 	@SuppressWarnings({"FieldCanBeLocal"})
+    private transient ScriptingContainer ruby;
 	private transient RubyClass rubyClass;
-	private transient ScriptingContainer ruby;
 	private transient RubyObject rubyObject;
 
     private final String region;
@@ -49,9 +49,10 @@ public class EC2CloudDelegate extends Cloud  {
 		this.readResolve(); // Set parents
 
 		System.out.println("EC2CloudDelegate.EC2CloudDelegate");
-        
-		this.ruby = this.getDescriptor().getRuby();
+
+        this.ruby = this.getDescriptor().getRuby();
 		this.rubyClass = this.getDescriptor().getRubyClass();
+        // Create ruby instance too
 		this.rubyObject = (RubyObject)this.ruby.callMethod(this.rubyClass, "new", region, accessId, secretKey, privateKey, instanceCap, templates);
     }
 
@@ -115,20 +116,19 @@ public class EC2CloudDelegate extends Cloud  {
 	@Extension
 	public static class DescriptorImpl extends Descriptor<Cloud> {
 
-		private transient ScriptingContainer jruby;
+		private transient ScriptingContainer ruby;
 		private transient RubyClass rubyClass;
 
 		public DescriptorImpl() {
 			System.out.println("EC2CloudDelegate$DescriptorImpl.DescriptorImpl");
-			jruby = new ScriptingContainer();
-			jruby.setClassLoader(jruby.getClass().getClassLoader());
-			load("hudson.rb");
-			load("ec2_cloud.rb");
-			rubyClass = (RubyClass) jruby.runScriptlet("EC2Cloud");
+
+            this.ruby = ((PluginImpl)Hudson.getInstance().getPlugin(PluginImpl.class)).getRuby();
+		    // This would be generated as <RubyClass>Delegate
+			rubyClass = (RubyClass)ruby.runScriptlet("EC2Cloud");
 		}
 
 		public String getDisplayName() {
-			return jruby.callMethod(rubyClass, "display_name").toString();
+			return ruby.callMethod(rubyClass, "display_name").toString();
 		}
 
 //        public FormValidation doTestConnection(
@@ -139,24 +139,12 @@ public class EC2CloudDelegate extends Cloud  {
 //            return null;
 //        }
 
-
-        // Ruby handling
-		private Object load(String script) {
-			Class resources = EC2CloudDelegate.class;
-			InputStream stream = resources.getResourceAsStream("EC2CloudDelegate/" + script);
-			if (stream != null) {
-				return jruby.runScriptlet(stream, script);
-			} else {
-				throw new IllegalStateException("can't find the ruby implementation: ec2_cloud.rb");
-			}
-		}
-
 		public RubyClass getRubyClass() {
 			return rubyClass;
 		}
 
 		public ScriptingContainer getRuby() {
-			return jruby;
+			return ruby;
 		}
 	}
 }
