@@ -1,0 +1,133 @@
+0.0.17 [Dec 7, 2010]
+- [BUGFIX] filter_parameters method wasn't computing the correct context for
+  its caller.
+
+0.0.16 [Dec 6, 2010]
+- Added bundler in the gemspec (leftover from previous version bump)
+
+0.0.15 [Dec 5, 2010]
+- [BUGFIX] declared_parameters_for usage is now consistent under instance and 
+  singleton context.
+- [INTERNAL] Elevated visibility for declared_parameters, 
+  declared_parameters_for, and filter_parameters to public.
+- [INTERNAL] Added optional processing of block to has_named_parameters and 
+  its ilk.
+- [INTERNAL] Tests added.
+
+0.0.14 [Nov 29, 2010]
+- [FEATURE] Added declared_parameters_for method.
+- [FEATURE] You can now limit/filter the list of declared parameters based on 
+  type:
+  
+      has_named_parameters :foobar, 
+        :required => :a, :optional => [ :b, :c ]
+      def foobar
+        declared_parameters(:required).inspect
+      end
+  
+      foobar  # => [ :a ]
+
+0.0.13 [Nov 28, 2010]
+- [INTERNAL] instrument -> apply_method_spec, to make it compatible with Rails.
+
+0.0.12 [Nov 25, 2010]
+- [FEATURE] Added apply_filters method.
+
+0.0.11 [Nov 24, 2010]
+- [BUGFIX] declared_parameters returns nil if called from an uninstrumented
+  method; it will now return an empty Array.
+  
+0.0.10 [Nov 24, 2010]
+- [BREAKING CHANGE] required_parameters to declared_parameters. So to get the 
+  list of declared parameters for a method, do:
+
+      has_named_parameters :foobar, 
+        :required => :a, :optional => [ :b, :c ]
+      def foobar
+        declared_parameters.inspect
+      end
+
+      foobar  # => [ :a, :b, :c ]
+
+- [INTERNAL] Parameter spec table is now retained. 
+
+0.0.9 [Nov 24, 2010]
+- [FEATURE] You can now query what parameters have been declared for a method:
+
+      class Foo
+        has_named_parameters :bar, 
+          :required => :x, :optional => [ :y, :z ]
+        def bar options = { }
+          required_parameters.inspect
+        end
+        
+        has_named_parameters :'self.zoo', 
+          :required => :a, :optional => [ :b, :c ]
+        def self.zoo
+          required_parameters.inspect
+        end
+      end
+      
+      Foo.new.bar  # => [ :x, :y, :z ]
+      Foo.zoo      # => [ :a, :b, :c ]
+      
+0.0.8 [Nov 22, 2010]
+- [INTERNAL] Parameter spec will no longer be shared between singleton and 
+  instance methods. Bonus performance improvement: it no longer needs to keep
+  track of the parameter specs after the class is declared.
+- [INTERNAL] The mode argument is no longer entertained by the requires and 
+  recognizes clause. Use the has_named_parameters clause on constructors if 
+  permissive behavior is required on optional parameters.
+
+0.0.7 [Nov 18, 2010]
+- [FEATURE] Added support to distinguish named parameters declaration for 
+  class and instance methods that uses the same names. So now you could do:
+  
+      class Mailer
+        has_named_parameters :send_mail, 
+          :required => :to, 
+          :optional => [ :from, 'yourself@example.org' ]
+        def send_mail options = { }
+          Mailer.send_mail options
+        end
+
+        has_named_parameters :'self.send_mail', :required => [ :to, :from ]
+        def self.send_mail options = { }
+          # ... do mail sending stuff here ...
+        end
+      end
+      
+- [FEATURE] Added support for requires clause.
+- [FEATURE] Added support for recognizes clause.
+- [FEATURE] Added support for permissive evaluation of optional parameters.
+- [INTERNAL] Will now expect that the Hash args for the named parameters is 
+  the last argument of the method.
+
+0.0.6 [Nov 13, 2010]
+- [FEATURE] Added support for requiring one-of from a list of named 
+  parameters.
+- [FEATURE] Added support for declaring default values for parameters.
+- [INTERNAL] spec is now normalized inside the has_named_parameters 
+  declaration allowing more flexible notation when when specifying default
+  values for parameters.
+- [INTERNAL] Updated tests.
+
+0.0.5 [Nov 11, 2010]
+- [BUGFIX] Same as 0.0.4 - except this time it's really fixed :-)
+
+0.0.4 [Nov 11, 2010]
+- [BUGFIX] Reported method name when ArgumentError is raised was ugly. 
+
+0.0.3 [Nov 11, 2010]
+- [FEATURE] Added support for has_named_parameter declaration for class 
+  methods.
+
+0.0.2 [Nov 10, 2010]
+- [BUGFIX] ArgumentError incorrectly references Module instead of actual class
+  that raised it.
+
+0.0.1 [Nov 10, 2010]
+- Initial release.
+
+0.0.0 [Nov 10, 2010]
+- Initial release. (yanked)

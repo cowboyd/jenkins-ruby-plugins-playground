@@ -2,7 +2,6 @@ package thefrontside.ci;
 
 import hudson.model.Describable;
 import hudson.model.Descriptor;
-import hudson.model.Descriptor.FormException;
 import hudson.model.Hudson;
 import hudson.model.TaskListener;
 import hudson.model.Label;
@@ -10,20 +9,16 @@ import hudson.model.Node;
 import hudson.Extension;
 import hudson.Util;
 import hudson.model.labels.LabelAtom;
-import hudson.util.FormValidation;
+import org.jruby.RubyClass;
+import org.jruby.RubyObject;
+import org.jruby.embed.ScriptingContainer;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 
-public class SlaveTemplate implements Describable<SlaveTemplate> {
+public class SlaveTemplate implements Describable<SlaveTemplate>,RubyDelegate {
     public final String ami;
     public final String description;
     public final String remoteFS;
@@ -31,6 +26,10 @@ public class SlaveTemplate implements Describable<SlaveTemplate> {
     public final String flavor;
     public final String labels;
     protected transient EC2CloudDelegate parent;
+
+    private transient ScriptingContainer ruby;
+    private transient RubyClass rubyClass;
+    private transient RubyObject rubyObject;
 
     private transient /*almost final*/ Set<LabelAtom> labelSet;
 
@@ -46,8 +45,24 @@ public class SlaveTemplate implements Describable<SlaveTemplate> {
         readResolve(); // initialize
     }
 
+    /**
+     * Initializes data structure that we don't persist.
+     */
+    protected Object readResolve() {
+        // Cache the ruby object
+        ruby = Hudson.getInstance().getPlugin(PluginImpl.class).getRuby();
+        rubyClass = (RubyClass)ruby.runScriptlet("SlaveTemplate");
+        // Create object & save
+        rubyObject = (RubyObject)ruby.callMethod(rubyClass, "new", ami, description, remoteFS, remoteAdmin, flavor, labels);
+        PluginImpl.addRubyDelegate(this);
+
+        labelSet = Label.parse(labels);
+
+        return this;
+    }
+
     public String getDisplayName() {
-        return description+" ("+ami+")";
+        return description + " (" + ami + ")";
     }
 
 
@@ -59,7 +74,9 @@ public class SlaveTemplate implements Describable<SlaveTemplate> {
     public EC2SlaveDelegate provision(TaskListener listener) throws IOException {
         // @TODO provision via ruby-fog
         System.out.println("SlaveTemplate.provision");
-        return null;
+        Object value = invoke("provision", listener);
+        EC2SlaveDelegate result = (EC2SlaveDelegate)PluginImpl.resolveRubyDelegate((RubyObject)value);
+        return result;
     }
 
     /**
@@ -68,21 +85,31 @@ public class SlaveTemplate implements Describable<SlaveTemplate> {
      */
     public EC2SlaveDelegate attach(String instanceId, TaskListener listener) throws IOException {
         System.out.println("SlaveTemplate.attach");
-        // @TODO attach via ruby-fog
-        return null;
+        Object value = invoke("attach", instanceId, listener);
+        EC2SlaveDelegate result = (EC2SlaveDelegate)PluginImpl.resolveRubyDelegate((RubyObject)value);
+        return result;
+    }
+    
+    public RubyObject getInstancedObject() {
+        return rubyObject;
     }
 
-    /**
-     * Initializes data structure that we don't persist.
-     */
-    protected Object readResolve() {
-        labelSet = Label.parse(labels);
-        return this;
+    public void setInstancedObject(RubyObject obj) {
+        rubyObject = obj;
     }
 
-    public boolean containsLabel(Label l) {
-        return l==null || labelSet.contains(l);
+    public RubyClass getClassObject() {
+        return rubyClass;
     }
+
+    public void setClassObject(RubyClass newClass) {
+        rubyClass = newClass;
+    }
+
+    private Object invoke(String method, Object... args) {
+        return ruby.callMethod(rubyObject, method, args);
+    }
+
 
     public Descriptor<SlaveTemplate> getDescriptor() {
         System.out.println("SlaveTemplate.getDescriptor");
@@ -94,6 +121,7 @@ public class SlaveTemplate implements Describable<SlaveTemplate> {
         public SlaveTemplateDescriptor() {
             System.out.println("SlaveTemplateDescriptor.SlaveTemplateDescriptor");
         }
+
         public String getDisplayName() {
             return null;
         }
