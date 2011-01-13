@@ -82,13 +82,15 @@ public class EC2CloudDelegate extends Cloud implements RubyDelegate  {
 
         // Convert non-native types
         RubyArray templates = (RubyArray)ruby.runScriptlet("[]");
+		rubyObject = (RubyObject)ruby.callMethod(rubyClass, "new", region, accessId, secretKey.getPlainText(), privateKey, instanceCap, templates);
         for (SlaveTemplate t: this.templates) {
             t.parent = this;
+			ruby.callMethod(t.getInstancedObject(), "instance_variable_set", "@parent", rubyObject);
             templates.add(t.getInstancedObject());
         }
 
         // Create ruby instance & save
-        rubyObject = (RubyObject)ruby.callMethod(rubyClass, "new", region, accessId, secretKey, privateKey, instanceCap, templates);
+
         PluginImpl.addRubyDelegate(this);
 
         return this;

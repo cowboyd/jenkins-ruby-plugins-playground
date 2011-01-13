@@ -17,14 +17,14 @@ class SlaveTemplate
   def provision(task_listener)
     puts "Launching #{@ami} with flavor #{@flavor}"
     compute = Fog::Compute.new(:provider => 'AWS',
-                               :aws_access_key_id => @access_id,
-                               :aws_secret_access_key => @secret_key)
+                               :aws_access_key_id => @parent.access_id,
+                               :aws_secret_access_key => @parent.secret_key)
 
     compute.run_instances(@ami,                      # AMI id
                           1,                         # Min slaves
                           1,                         # Max slaves
                           "InstanceType" => @flavor) # options
-    EC2Slave.new @ami, @description, @remote_fs, Fog::AWS::Compute::Flavor.get(@flavor)[:cores], @labels, @remote_admin 
+    EC2Slave.new @ami, @description, @remote_fs, 1, @labels, @remote_admin
   end
 
   def attach(instance_id, listener)
