@@ -3,3 +3,4 @@ source "http://rubygems.org"
 
 # gem "rails"
 gem "fog"
+gem "jruby-openssl"

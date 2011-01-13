@@ -3,7 +3,6 @@ package thefrontside.ci;
 import hudson.Extension;
 import hudson.util.Secret;
 import hudson.slaves.Cloud;
-import hudson.slaves.NodeProvisioner;
 import hudson.slaves.NodeProvisioner.PlannedNode;
 import hudson.model.*;
 
@@ -21,10 +20,7 @@ import org.kohsuke.stapler.StaplerResponse;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class EC2CloudDelegate extends Cloud implements RubyDelegate  {
 	@SuppressWarnings({"FieldCanBeLocal"})
@@ -42,7 +38,7 @@ public class EC2CloudDelegate extends Cloud implements RubyDelegate  {
 
     @DataBoundConstructor
 	public EC2CloudDelegate(String region, String accessId, String secretKey, String privateKey, String instanceCapStr, List<SlaveTemplate> templates) {
-		super("ec2-"+region);
+		super("ec2-"+ region);
         this.region = region;
         this.accessId = accessId;
         this.secretKey = Secret.fromString(secretKey.trim());
@@ -202,7 +198,7 @@ public class EC2CloudDelegate extends Cloud implements RubyDelegate  {
     }
 
     @Extension
-	public static class DescriptorImpl extends Descriptor<Cloud> {
+	public static class DescriptorImpl  extends Descriptor<Cloud> {
 
 		private transient ScriptingContainer ruby;
 		private transient RubyClass rubyClass;
@@ -211,7 +207,8 @@ public class EC2CloudDelegate extends Cloud implements RubyDelegate  {
             this.ruby = PluginImpl.get().getRuby();
             // This would be generated as <RubyClass>Delegate
 			rubyClass = (RubyClass)ruby.runScriptlet("EC2Cloud");
-		}
+        }
+
 
 		public String getDisplayName() {
 			return ruby.callMethod(rubyClass, "display_name").toString();

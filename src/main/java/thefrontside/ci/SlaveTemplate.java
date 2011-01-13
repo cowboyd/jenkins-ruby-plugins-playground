@@ -89,7 +89,7 @@ public class SlaveTemplate implements Describable<SlaveTemplate>,RubyDelegate {
         EC2SlaveDelegate result = (EC2SlaveDelegate)PluginImpl.resolveRubyDelegate((RubyObject)value);
         return result;
     }
-    
+
     public RubyObject getInstancedObject() {
         return rubyObject;
     }
@@ -120,6 +120,10 @@ public class SlaveTemplate implements Describable<SlaveTemplate>,RubyDelegate {
     public static final class SlaveTemplateDescriptor extends Descriptor<SlaveTemplate> {
         public SlaveTemplateDescriptor() {
             System.out.println("SlaveTemplateDescriptor.SlaveTemplateDescriptor");
+        }
+
+        public String[] getFlavors() {
+            return new String[] {"m1.large", "Medium", "Fucking Awesome"};
         }
 
         public String getDisplayName() {

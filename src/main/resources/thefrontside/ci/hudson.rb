@@ -1,4 +1,3 @@
-
 module Hudson
   class Cloud
     def initialize(name)

@@ -9,10 +9,12 @@
       <sourceFolder url="file://$MODULE_DIR$/src/main/resources" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target/classes" />
       <excludeFolder url="file://$MODULE_DIR$/target/generated-sources/groovy-stubs" />
+      <excludeFolder url="file://$MODULE_DIR$/target/work" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: org.jruby:jruby-complete:1.5.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.jvnet.hudson.main:hudson-war:war:1.380" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jvnet.hudson.main:hudson-core:1.380" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jvnet.hudson.main:remoting:1.380" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.jvnet.hudson.main:cli:1.380" level="project" />

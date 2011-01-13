@@ -15,7 +15,7 @@ class SlaveTemplate
   attr_reader :ami
 
   def provision(task_listener)
-    puts "Launching #{@ami}"
+    puts "Launching #{@ami} with flavor #{@flavor}"
     compute = Fog::Compute.new(:provider => 'AWS',
                                :aws_access_key_id => @access_id,
                                :aws_secret_access_key => @secret_key)
