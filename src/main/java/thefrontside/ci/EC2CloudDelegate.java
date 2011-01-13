@@ -75,6 +75,7 @@ public class EC2CloudDelegate extends Cloud implements RubyDelegate  {
     }
 
     public Object readResolve() {
+		System.out.println("EC2CloudDelegate.readResolve");
         // Cache the ruby objects
         ruby = Hudson.getInstance().getPlugin(PluginImpl.class).getRuby();
         rubyClass = (RubyClass)ruby.runScriptlet("EC2Cloud");

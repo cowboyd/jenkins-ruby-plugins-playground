@@ -1,6 +1,10 @@
 class EC2Cloud < Hudson::Cloud
 
-  display_name "Amazon EC2"  
+  attr_reader :access_id, :secret_key
+
+  display_name "Amazon EC2"
+
+
 
   def initialize(region, access_id, secret_key, private_key, instance_cap, templates)
     super("ec2-" + region)

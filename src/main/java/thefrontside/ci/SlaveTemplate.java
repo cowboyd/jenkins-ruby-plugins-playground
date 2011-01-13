@@ -49,6 +49,7 @@ public class SlaveTemplate implements Describable<SlaveTemplate>,RubyDelegate {
      * Initializes data structure that we don't persist.
      */
     protected Object readResolve() {
+		System.out.println("SlaveTemplate.readResolve");
         // Cache the ruby object
         ruby = Hudson.getInstance().getPlugin(PluginImpl.class).getRuby();
         rubyClass = (RubyClass)ruby.runScriptlet("SlaveTemplate");
