@@ -52,11 +52,11 @@ public class SlaveTemplate implements Describable<SlaveTemplate>,RubyDelegate {
     protected Object readResolve() {
 		System.out.println("SlaveTemplate.readResolve");
         // Cache the ruby object
-        ruby = Hudson.getInstance().getPlugin(RubyPlugin.class).getRuby();
+        //ruby = Hudson.getInstance().getPlugin(RubyPlugin.class).getRuby();
         rubyClass = (RubyClass)ruby.runScriptlet("SlaveTemplate");
         // Create object & save
         rubyObject = (RubyObject)ruby.callMethod(rubyClass, "new", ami, description, remoteFS, remoteAdmin, flavor, labels);
-        RubyPlugin.addRubyDelegate(this);
+        //RubyPlugin.addRubyDelegate(this);
 
         labelSet = Label.parse(labels);
 
@@ -77,8 +77,9 @@ public class SlaveTemplate implements Describable<SlaveTemplate>,RubyDelegate {
         // @TODO provision via ruby-fog
         System.out.println("SlaveTemplate.provision");
         Object value = invoke("provision", listener);
-        EC2SlaveDelegate result = (EC2SlaveDelegate) RubyPlugin.resolveRubyDelegate((RubyObject) value);
-        return result;
+        //EC2SlaveDelegate result = (EC2SlaveDelegate) RubyPlugin.resolveRubyDelegate((RubyObject) value);
+        //return result;
+		return null;
     }
 
     /**
@@ -88,8 +89,8 @@ public class SlaveTemplate implements Describable<SlaveTemplate>,RubyDelegate {
     public EC2SlaveDelegate attach(String instanceId, TaskListener listener) throws IOException {
         System.out.println("SlaveTemplate.attach");
         Object value = invoke("attach", instanceId, listener);
-        EC2SlaveDelegate result = (EC2SlaveDelegate) RubyPlugin.resolveRubyDelegate((RubyObject) value);
-        return result;
+        //EC2SlaveDelegate result = (EC2SlaveDelegate) RubyPlugin.resolveRubyDelegate((RubyObject) value);
+        return null;
     }
 
     public RubyObject getInstancedObject() {

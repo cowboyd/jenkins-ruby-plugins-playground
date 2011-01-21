@@ -60,7 +60,7 @@ public class EC2CloudDelegate extends Cloud implements RubyDelegate  {
     public EC2CloudDelegate(RubyObject obj) {
         super("ec2-" + (String)obj.getInternalVariable("region"));
         // Cache the ruby object
-        ruby = RubyPlugin.get().getRuby();
+        //ruby = RubyPlugin.get().getRuby();
         // Verify we have a EC2Cloud RubyObject
         if( obj.getMetaClass() != (RubyClass)ruby.runScriptlet("EC2Cloud")) {
             region = accessId = privateKey = "ERROR";
@@ -80,7 +80,7 @@ public class EC2CloudDelegate extends Cloud implements RubyDelegate  {
     public Object readResolve() {
 		System.out.println("EC2CloudDelegate.readResolve");
         // Cache the ruby objects
-        ruby = Hudson.getInstance().getPlugin(RubyPlugin.class).getRuby();
+        //ruby = Hudson.getInstance().getPlugin(RubyPlugin.class).getRuby();
         rubyClass = (RubyClass)ruby.runScriptlet("EC2Cloud");
 
         // Convert non-native types
@@ -94,7 +94,7 @@ public class EC2CloudDelegate extends Cloud implements RubyDelegate  {
 
         // Create ruby instance & save
 
-        RubyPlugin.addRubyDelegate(this);
+        //RubyPlugin.addRubyDelegate(this);
 
         return this;
     }
@@ -127,12 +127,13 @@ public class EC2CloudDelegate extends Cloud implements RubyDelegate  {
         System.out.println("EC2CloudDelegate.getTemplate");
         Object value = invoke("get_template", label);
 
-        return (SlaveTemplate) RubyPlugin.resolveRubyDelegate((RubyObject) value);
+        //return (SlaveTemplate) RubyPlugin.resolveRubyDelegate((RubyObject) value);
         
 //        for (SlaveTemplate t : templates)
 //            if(t.containsLabel(label))
 //                return t;
 //        return null;
+		return null;
     }
 
 	public boolean canProvision(Label label) {
@@ -211,7 +212,7 @@ public class EC2CloudDelegate extends Cloud implements RubyDelegate  {
 		private transient RubyClass rubyClass;
 
 		public DescriptorImpl() {
-            this.ruby = RubyPlugin.get().getRuby();
+            //this.ruby = RubyPlugin.get().getRuby();
             // This would be generated as <RubyClass>Delegate
 			rubyClass = (RubyClass)ruby.runScriptlet("EC2Cloud");
         }
