@@ -3,3 +3,5 @@
 .idea/
 target/
 work/
+vendor/
+.bundle

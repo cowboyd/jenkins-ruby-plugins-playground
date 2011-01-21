@@ -7,7 +7,7 @@ import org.jruby.RubyObject;
  * RubyDelegate
  *
  * This interface is for objects that delegate to a Ruby object for functionality. This allows them to be managed by
- * our PluginImpl, which keeps a WeakHashMap to all RubyDelegates and their objects.
+ * our RubyPlugin, which keeps a WeakHashMap to all RubyDelegates and their objects.
 
  * User: elixir
  * Date: Dec 7, 2010

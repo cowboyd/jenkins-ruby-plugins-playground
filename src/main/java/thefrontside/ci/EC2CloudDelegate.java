@@ -16,6 +16,9 @@ import org.jruby.RubyObject;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
+import ruby.RubyPlugin;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
@@ -57,7 +60,7 @@ public class EC2CloudDelegate extends Cloud implements RubyDelegate  {
     public EC2CloudDelegate(RubyObject obj) {
         super("ec2-" + (String)obj.getInternalVariable("region"));
         // Cache the ruby object
-        ruby = PluginImpl.get().getRuby();
+        ruby = RubyPlugin.get().getRuby();
         // Verify we have a EC2Cloud RubyObject
         if( obj.getMetaClass() != (RubyClass)ruby.runScriptlet("EC2Cloud")) {
             region = accessId = privateKey = "ERROR";
@@ -77,7 +80,7 @@ public class EC2CloudDelegate extends Cloud implements RubyDelegate  {
     public Object readResolve() {
 		System.out.println("EC2CloudDelegate.readResolve");
         // Cache the ruby objects
-        ruby = Hudson.getInstance().getPlugin(PluginImpl.class).getRuby();
+        ruby = Hudson.getInstance().getPlugin(RubyPlugin.class).getRuby();
         rubyClass = (RubyClass)ruby.runScriptlet("EC2Cloud");
 
         // Convert non-native types
@@ -91,11 +94,12 @@ public class EC2CloudDelegate extends Cloud implements RubyDelegate  {
 
         // Create ruby instance & save
 
-        PluginImpl.addRubyDelegate(this);
+        RubyPlugin.addRubyDelegate(this);
 
         return this;
     }
 
+	@Exported
     public String getAccessId() {
         return accessId;
     }
@@ -123,7 +127,7 @@ public class EC2CloudDelegate extends Cloud implements RubyDelegate  {
         System.out.println("EC2CloudDelegate.getTemplate");
         Object value = invoke("get_template", label);
 
-        return (SlaveTemplate)PluginImpl.resolveRubyDelegate((RubyObject)value);
+        return (SlaveTemplate) RubyPlugin.resolveRubyDelegate((RubyObject) value);
         
 //        for (SlaveTemplate t : templates)
 //            if(t.containsLabel(label))
@@ -200,14 +204,14 @@ public class EC2CloudDelegate extends Cloud implements RubyDelegate  {
         return (DescriptorImpl) super.getDescriptor();
     }
 
-    @Extension
+    //@Extension
 	public static class DescriptorImpl  extends Descriptor<Cloud> {
 
 		private transient ScriptingContainer ruby;
 		private transient RubyClass rubyClass;
 
 		public DescriptorImpl() {
-            this.ruby = PluginImpl.get().getRuby();
+            this.ruby = RubyPlugin.get().getRuby();
             // This would be generated as <RubyClass>Delegate
 			rubyClass = (RubyClass)ruby.runScriptlet("EC2Cloud");
         }
@@ -224,6 +228,10 @@ public class EC2CloudDelegate extends Cloud implements RubyDelegate  {
 //                @QueryParameter String privateKey) throws IOException, ServletException {
 //            return null;
 //        }
+	}
+
+	public static void main(String[] args) {
+		System.out.println("EC2CloudDelegate.main");
 	}
 }
 
