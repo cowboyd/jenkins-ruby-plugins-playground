@@ -16,12 +16,16 @@ module Hudson
       end
 
       def start
+        script = 'support/hudson/plugin/models.rb'
+        self.instance_eval @java.read(script), script
         @start.call()
       end
 
       def stop
         @stop.call()
       end
+
+      private
 
       class DSL
         def initialize(controller)

@@ -1,29 +1,57 @@
 package ruby;
 
 import hudson.Extension;
+import hudson.ExtensionComponent;
 import hudson.Plugin;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.Hudson;
+import org.jruby.RubyClass;
 import org.jruby.embed.LocalContextScope;
 import org.jruby.embed.ScriptingContainer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
 @Extension
+@SuppressWarnings({"UnusedDeclaration"})
 public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
-    private transient ScriptingContainer ruby;
+    private ScriptingContainer ruby;
 
 	private Object plugin;
+	private ArrayList<ExtensionComponent<Descriptor>> descriptors;
+
+	public static RubyPlugin get() {
+		return Hudson.getInstance().getPlugin(RubyPlugin.class);
+	}
+	public static Object callMethod(Object object, String methodName, Object... args) {
+		return RubyPlugin.get().ruby.callMethod(object, methodName, args);
+	}
+
+
+
+	public void addDescriptor(Descriptor descriptor) {
+		descriptors.add(new ExtensionComponent<Descriptor>(descriptor));
+	}
+
+	public static ArrayList<ExtensionComponent<Descriptor>> getDescriptors() {
+		return get().descriptors;
+	}
+
+	public static String readf(String resource, Object... args) {
+		return RubyPlugin.get().read(String.format(resource, args));
+	}
 
 	public RubyPlugin() {
 		this.ruby = new ScriptingContainer(LocalContextScope.SINGLETHREAD);
 		this.ruby.setClassLoader(this.getClass().getClassLoader());
 		this.ruby.getLoadPaths().add(0, this.getClass().getResource("support").getPath());
+		this.ruby.getLoadPaths().add(this.getClass().getResource(".").getPath());
 		this.ruby.runScriptlet("require 'hudson/plugin/controller'");
 		Object pluginClass = this.ruby.runScriptlet("Hudson::Plugin::Controller");
 		this.plugin = this.ruby.callMethod(pluginClass, "new", this);
+		this.descriptors = new ArrayList<ExtensionComponent<Descriptor>>();
 	}
 
 
@@ -57,11 +85,15 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
         return (DescriptorImpl)Hudson.getInstance().getDescriptorOrDie(getClass());
     }
 
-    @Extension
+	public static String getResourceURI(String relativePathFormat, Object... args) {
+		return get().getClass().getResource(String.format(relativePathFormat, args)).getPath();
+	}
+
+	@Extension
     public static final class DescriptorImpl extends Descriptor<RubyPlugin> {
         @Override
         public String getDisplayName() {
-            return "Fog RubyPlugin";
+            return "Ruby Plugin";
         }
     }
 }
