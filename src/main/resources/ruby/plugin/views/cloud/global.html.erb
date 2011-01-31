@@ -1,0 +1,7 @@
+<% entry "Access Id", "access_id" do %>
+	<%= textbox %>
+<% end %>
+<% entry "Secret Access Key", "secret_key" do %>
+	<%= password %>
+<% end %>
+<%= validate_button :title => "Test Connection", :progress => "Testing...", :method => "test_connection", :with => "secret_key,access_id" %>

@@ -7,6 +7,9 @@ module Hudson
       def initialize(java)
         @java = java
         @start = @stop = proc {}
+        @wrappers = Hash.new do |wrappers, object|
+          wrappers[object] = object.class::Wrapper.new(object, self)
+        end
         require 'bundled-gems.jar'
         require 'rubygems'
         DSL.new(self) do |dsl|
@@ -23,6 +26,14 @@ module Hudson
 
       def stop
         @stop.call()
+      end
+
+      def import(wrapper)
+        wrapper.unwrap
+      end
+
+      def export(object)
+        @wrappers[object]
       end
 
       private
