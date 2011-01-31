@@ -11,7 +11,7 @@ module Hudson
     end
 
 
-    # Provisions new {@link Node}s from this cloud.
+    # Provisions new {@link Node}s from this fog_cloud.
     #
     # <p>
     # {@link NodeProvisioner} performs a trend analysis on the load,

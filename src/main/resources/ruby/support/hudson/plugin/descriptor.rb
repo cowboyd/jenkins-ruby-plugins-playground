@@ -1,9 +1,18 @@
 
 module Hudson
   module Plugin
-    module Descriptor
+    class Descriptor < Java::HudsonModel::Descriptor
+      def initialize(name, impl, plugin, java_type)
+        super(Java::OrgJruby::RubyObject.java_class)
+        @name, @impl, @plugin, @java_type = name, impl, plugin, java_type
+      end
+
       def getDisplayName
         @impl.display_name
+      end
+
+      def getT()
+        @java_type
       end
 
       def getConfigPage

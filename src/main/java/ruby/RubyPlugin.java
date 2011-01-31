@@ -29,8 +29,6 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 		return RubyPlugin.get().ruby.callMethod(object, methodName, args);
 	}
 
-
-
 	public void addDescriptor(Descriptor descriptor) {
 		descriptors.add(new ExtensionComponent<Descriptor>(descriptor));
 	}
