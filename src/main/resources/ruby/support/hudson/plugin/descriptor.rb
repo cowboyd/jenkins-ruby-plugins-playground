@@ -16,11 +16,15 @@ module Hudson
       end
 
       def getConfigPage
-        "/ruby/plugin/views/#{@name}/config.jelly"
+        "/ruby/plugin/views/#{@name}/config.jelly".tap do |path|
+          puts "getGlobalConfigPage -> #{path}"
+        end
       end
 
       def getGlobalConfigPage
-        "/ruby/plugin/views/#{@name}/global.jelly"
+        "/ruby/plugin/views/#{@name}/config.jelly".tap do |path|
+          puts "getGlobalConfigPage -> #{path}"
+        end
       end
 
       def newInstance(request, form)
