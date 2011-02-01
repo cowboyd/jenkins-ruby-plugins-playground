@@ -3,13 +3,15 @@ module Hudson
   module Plugin
 
     class Controller
+      attr_reader :descriptors
 
       def initialize(java)
         @java = java
         @start = @stop = proc {}
-        @wrappers = Hash.new do |wrappers, object|
-          wrappers[object] = object.class::Wrapper.new(object, self)
-        end
+        @descriptors = {}
+        @wrappers = {}
+        #commented out right now because we don't actually want to load any ruby
+        #It takes too long!
         require 'bundled-gems.jar'
         require 'rubygems'
         DSL.new(self) do |dsl|
@@ -28,12 +30,16 @@ module Hudson
         @stop.call()
       end
 
-      def import(wrapper)
-        wrapper.unwrap
+      def import(object)
+        object.respond_to?(:unwrap) ? object.unwrap : object
       end
 
       def export(object)
-        @wrappers[object]
+        return @wrappers[object] if @wrappers[object]
+        case object
+          when Hudson::Plugin::Cloud then @wrappers[object] = Hudson::Plugin::Cloud::Wrapper.new(self, object)
+          else object
+        end
       end
 
       private

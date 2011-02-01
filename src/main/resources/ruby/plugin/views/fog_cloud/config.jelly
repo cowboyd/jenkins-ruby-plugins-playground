@@ -1,19 +1,20 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
 
-  <f:entry title="${%Region}" field="region">
-    <f:enum>${it.displayName}</f:enum>
-  </f:entry>
-  <f:entry title="${%Access Key ID}" field="accessId">
+	<f:entry title="${%Name}" field="name">
+		<f:textbox/>
+	</f:entry>
+  <f:entry title="${%Access Key ID}" field="access_id">
     <f:textbox />
   </f:entry>
-  <f:entry title="${%Secret Access Key}" field="secretKey">
+  <f:entry title="${%Secret Access Key}" field="secret_key">
     <f:password />
   </f:entry>
-  <f:entry title="${%EC2 RSA Private Key}" field="privateKey">
+  <f:entry title="${%EC2 RSA Private Key}" field="private_key">
     <f:textarea />
   </f:entry>
   <f:validateButton title="${%Test Connection}" progress="${%Testing...}" method="testConnection" with="region,secretKey,accessId,privateKey" />
 
+<!--
   <f:entry title="${%AMIs}" description="${%List of AMIs to be launched as slaves}">
     <f:repeatable field="templates">
 
@@ -50,4 +51,6 @@
       </table>
     </f:repeatable>
   </f:entry>
+-->
+
 </j:jelly>

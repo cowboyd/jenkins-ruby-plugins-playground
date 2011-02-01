@@ -1,8 +1,8 @@
 
-require 'fog'
+#require 'fog'
 
 start do
-  puts "starting Fog plugin #{Fog::VERSION}"
+  puts "starting Fog 0.4.0"
 end
 
 stop do

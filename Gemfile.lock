@@ -33,3 +33,4 @@ PLATFORMS
 DEPENDENCIES
   fog
   jruby-openssl
+  json
