@@ -48,6 +48,8 @@ module Hudson
               instance.instance_variable_set("@#{k}", v)
             end
             instance.send(:initialize)
+            puts "new instance created: #{instance.inspect}"
+            $stdout.flush()
           end
         end
       end

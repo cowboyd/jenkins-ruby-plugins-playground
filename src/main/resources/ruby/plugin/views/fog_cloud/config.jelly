@@ -3,6 +3,7 @@
 	<f:entry title="${%Name}" field="name">
 		<f:textbox/>
 	</f:entry>
+<!--
   <f:entry title="${%Access Key ID}" field="access_id">
     <f:textbox />
   </f:entry>
@@ -13,6 +14,7 @@
     <f:textarea />
   </f:entry>
   <f:validateButton title="${%Test Connection}" progress="${%Testing...}" method="testConnection" with="region,secretKey,accessId,privateKey" />
+-->
 
 <!--
   <f:entry title="${%AMIs}" description="${%List of AMIs to be launched as slaves}">
