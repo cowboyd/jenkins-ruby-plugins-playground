@@ -9,6 +9,7 @@ import hudson.model.Hudson;
 import org.jruby.RubyClass;
 import org.jruby.embed.LocalContextScope;
 import org.jruby.embed.ScriptingContainer;
+import org.jruby.javasupport.proxy.InternalJavaProxy;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,6 +47,7 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 		this.ruby.setClassLoader(this.getClass().getClassLoader());
 		this.ruby.getLoadPaths().add(0, this.getClass().getResource("support").getPath());
 		this.ruby.getLoadPaths().add(this.getClass().getResource(".").getPath());
+		Hudson.XSTREAM.aliasType("rubyobject", InternalJavaProxy.class);
 		this.ruby.runScriptlet("require 'hudson/plugin/controller'");
 		Object pluginClass = this.ruby.runScriptlet("Hudson::Plugin::Controller");
 		this.plugin = this.ruby.callMethod(pluginClass, "new", this);

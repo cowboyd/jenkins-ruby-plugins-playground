@@ -11,7 +11,7 @@ module Hudson
 
       def marshal(source, writer, context)
         puts "marshal:(#{source.inspect})"
-	    writer.setValue(source.unwrap.to_yaml)
+	    writer.setValue("\n" + source.unwrap.to_yaml)
 	  end
 
 	  def unmarshal(reader, context)

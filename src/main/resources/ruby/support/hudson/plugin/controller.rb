@@ -10,8 +10,6 @@ module Hudson
         @start = @stop = proc {}
         @descriptors = {}
         @wrappers = {}
-        #commented out right now because we don't actually want to load any ruby
-        #It takes too long!
         require 'bundled-gems.jar'
         require 'rubygems'
         require 'support/hudson/plugin/converter'
