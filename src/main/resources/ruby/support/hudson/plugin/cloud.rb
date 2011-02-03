@@ -18,9 +18,12 @@ module Hudson
         []
       end
 
+
       class Wrapper < Java::HudsonSlaves::Cloud
+
         def initialize(plugin, object)
           super(object.name)
+          puts "Hudson::Plugin::Cloud::Wrapper.new(#{plugin}, #{object})"
           @plugin, @object = plugin, object
         end
 
@@ -32,7 +35,7 @@ module Hudson
           @plugin.export @object.provision(@plugin.import(label), excess_workload)
         end
 
-        def descriptor
+        def getDescriptor
           @plugin.descriptors[Cloud]
         end
 
@@ -40,6 +43,7 @@ module Hudson
           @object
         end
       end
+
 
       module ClassMethods
         def new(properties)

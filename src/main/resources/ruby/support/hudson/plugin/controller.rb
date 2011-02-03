@@ -14,10 +14,13 @@ module Hudson
         #It takes too long!
         require 'bundled-gems.jar'
         require 'rubygems'
+        require 'support/hudson/plugin/converter'
         DSL.new(self) do |dsl|
           script = @java.read("plugin.rb")
           dsl.instance_eval(script, "plugin.rb")
         end
+        converter = Hudson::Plugin::Converter.new(self)
+        Java::HudsonModel::Hudson::XSTREAM.registerConverter(converter)
       end
 
       def start
@@ -35,9 +38,14 @@ module Hudson
       end
 
       def export(object)
+        puts "export(#{object})"
         return @wrappers[object] if @wrappers[object]
         case object
-          when Hudson::Plugin::Cloud then @wrappers[object] = Hudson::Plugin::Cloud::Wrapper.new(self, object)
+          when Hudson::Plugin::Cloud
+            puts "it's a cloud, I'm going to wrap it"
+            wrapper = Hudson::Plugin::Cloud::Wrapper.new(self, object)
+            puts "wrapper created: #{wrapper}"
+            return wrapper
           else object
         end
       end

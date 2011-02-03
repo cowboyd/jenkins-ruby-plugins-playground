@@ -34,10 +34,9 @@ module Hudson
         properties = JSON.parse(form.toString(2))
         properties.delete("kind")
         properties.delete("stapler-class")
-        @plugin.export(@impl.new(properties)).tap do |described|
-          "described new Instance: #{described.inspect}"
-          $stdout.flush()
-        end
+        instance = @plugin.export(@impl.new(properties))
+        puts "instance created: #{instance}"
+        return instance
       end
 
     end
