@@ -13,6 +13,8 @@ module Hudson
         require 'bundled-gems.jar'
         require 'rubygems'
         require 'support/hudson/plugin/converter'
+        script = 'support/hudson/plugin/models.rb'
+        self.instance_eval @java.read(script), script
         DSL.new(self) do |dsl|
           script = @java.read("plugin.rb")
           dsl.instance_eval(script, "plugin.rb")
@@ -22,8 +24,6 @@ module Hudson
       end
 
       def start
-        script = 'support/hudson/plugin/models.rb'
-        self.instance_eval @java.read(script), script
         @start.call()
       end
 

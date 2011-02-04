@@ -15,7 +15,8 @@ module Hudson
 	  end
 
 	  def unmarshal(reader, context)
-        @plugin.export YAML.parse(reader.getValue())
+        puts "unmarshal()"
+        @plugin.export YAML.load(reader.getValue())
       end
 
 	end
