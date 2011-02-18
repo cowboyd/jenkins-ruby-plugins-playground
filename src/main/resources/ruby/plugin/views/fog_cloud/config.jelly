@@ -2,4 +2,10 @@
    <f:entry title="${%Name}" field="name">
     <f:textbox />	
   </f:entry>
+  <f:entry title="${%AWS Access Id}" field="aws_access_id">
+   <f:textbox />
+ </f:entry>
+  <f:entry title="${%AWS Secret Key}" field="aws_secret_key">
+   <f:textbox />
+ </f:entry>
 </j:jelly>
