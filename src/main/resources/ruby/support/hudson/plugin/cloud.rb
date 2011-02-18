@@ -18,7 +18,7 @@ module Hudson
         []
       end
 
-
+                      #hudson.slaves.Cloud
       class Wrapper < Java::HudsonSlaves::Cloud
 
         def initialize(plugin, object)
@@ -36,7 +36,8 @@ module Hudson
         end
 
         def getDescriptor
-          @plugin.descriptors[Cloud]
+          puts "object.class: #{@object.class} -> #{@plugin.descriptors[@object.class]}"
+          @plugin.descriptors[@object.class]
         end
 
         def unwrap
