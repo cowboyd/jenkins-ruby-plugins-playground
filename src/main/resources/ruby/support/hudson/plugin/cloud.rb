@@ -43,6 +43,11 @@ module Hudson
         def unwrap
           @object
         end
+
+        def get(name)
+          @object.respond_to?(name) ? @object.send(:name) : nil
+        end
+
       end
 
 
