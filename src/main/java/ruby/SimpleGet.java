@@ -1,6 +1,6 @@
 package ruby;
 
-public interface SillyGet {
+public interface SimpleGet {
 
 	Object get(String name);
 }

@@ -18,9 +18,9 @@ module Hudson
         []
       end
 
-                      #hudson.slaves.Cloud
       class Wrapper < Java::HudsonSlaves::Cloud
-        include Java::Ruby::SillyGet
+        include Java::Ruby::SimpleGet
+        include Java::Ruby::RubyDoDynamic
 
         def initialize(plugin, object)
           super(object.name)
@@ -47,6 +47,10 @@ module Hudson
 
         def get(name)
           @object.respond_to?(name) ? @object.send(name) : nil
+        end
+
+        def doDynamic(request, response)
+          response.getWriter().println("Hello")
         end
 
       end
