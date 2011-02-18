@@ -10,6 +10,7 @@ import org.jruby.RubyClass;
 import org.jruby.embed.LocalContextScope;
 import org.jruby.embed.ScriptingContainer;
 import org.jruby.javasupport.proxy.InternalJavaProxy;
+import org.kohsuke.stapler.WebApp;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,12 +44,12 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 	}
 
 	public RubyPlugin() {
+		Hudson.XSTREAM.aliasType("rubyobject", InternalJavaProxy.class);
 		this.ruby = new ScriptingContainer(LocalContextScope.SINGLETHREAD);
 		this.ruby.setClassLoader(this.getClass().getClassLoader());
 		this.ruby.getLoadPaths().add(0, this.getClass().getResource("support").getPath());
 		this.ruby.getLoadPaths().add(this.getClass().getResource(".").getPath());
 		this.descriptors = new ArrayList<ExtensionComponent<Descriptor>>();
-		Hudson.XSTREAM.aliasType("rubyobject", InternalJavaProxy.class);
 		this.ruby.runScriptlet("require 'hudson/plugin/controller'");
 		Object pluginClass = this.ruby.runScriptlet("Hudson::Plugin::Controller");
 		this.plugin = this.ruby.callMethod(pluginClass, "new", this);
@@ -74,6 +75,7 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 
 	@Override
     public void start() throws Exception {
+		//WebApp.getCurrent().getMetaClass(Object.class).dispatchers.add(0, new RubyDispatcher());
         this.ruby.callMethod(plugin, "start");
     }
 
