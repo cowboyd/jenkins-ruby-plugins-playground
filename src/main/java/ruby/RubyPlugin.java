@@ -6,7 +6,6 @@ import hudson.Plugin;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.Hudson;
-import hudson.model.UpdateCenter.HudsonUpgradeJob;
 import org.jruby.RubyClass;
 import org.jruby.embed.LocalContextScope;
 import org.jruby.embed.ScriptingContainer;
@@ -54,7 +53,7 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 		this.ruby.runScriptlet("require 'hudson/plugin/controller'");
 		Object pluginClass = this.ruby.runScriptlet("Hudson::Plugin::Controller");
 		this.plugin = this.ruby.callMethod(pluginClass, "new", this);
-        WebApp.get(Hudson.getInstance().servletContext).getResponseRenderers().add(new HttpResponseRendererImpl());
+
 	}
 
 
