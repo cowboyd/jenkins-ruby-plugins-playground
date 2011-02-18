@@ -20,12 +20,12 @@ module Hudson
 
       def getConfigPage
         "/ruby/plugin/views/#{@name}/config.jelly".tap do |path|
-          puts "getGlobalConfigPage -> #{path}"
+          puts "getConfigPage -> #{path}"
         end
       end
 
       def getGlobalConfigPage
-        "/ruby/plugin/views/#{@name}/config.jelly".tap do |path|
+        "/ruby/plugin/views/#{@name}/global.jelly".tap do |path|
           puts "getGlobalConfigPage -> #{path}"
         end
       end
