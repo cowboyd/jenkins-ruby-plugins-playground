@@ -20,6 +20,7 @@ module Hudson
 
                       #hudson.slaves.Cloud
       class Wrapper < Java::HudsonSlaves::Cloud
+        include Java::Ruby::SillyGet
 
         def initialize(plugin, object)
           super(object.name)
@@ -45,11 +46,10 @@ module Hudson
         end
 
         def get(name)
-          @object.respond_to?(name) ? @object.send(:name) : nil
+          @object.respond_to?(name) ? @object.send(name) : nil
         end
 
       end
-
 
       module ClassMethods
         def new(properties)
