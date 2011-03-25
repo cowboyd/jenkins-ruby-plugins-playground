@@ -6,12 +6,17 @@ import hudson.Plugin;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.Hudson;
-import org.jruby.RubyClass;
+import hudson.model.Items;
+import org.apache.commons.jelly.JellyException;
+import org.apache.commons.jelly.Script;
 import org.jruby.embed.LocalContextScope;
 import org.jruby.embed.ScriptingContainer;
 import org.jruby.javasupport.proxy.InternalJavaProxy;
+import org.kohsuke.stapler.MetaClass;
 import org.kohsuke.stapler.WebApp;
+import org.kohsuke.stapler.jelly.JellyClassTearOff;
 
+import javax.servlet.ServletContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -45,6 +50,7 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 
 	public RubyPlugin() {
 		Hudson.XSTREAM.aliasType("rubyobject", InternalJavaProxy.class);
+		Items.XSTREAM.aliasType("rubyobject", InternalJavaProxy.class);
 		this.ruby = new ScriptingContainer(LocalContextScope.SINGLETHREAD);
 		this.ruby.setClassLoader(this.getClass().getClassLoader());
 		this.ruby.getLoadPaths().add(0, this.getClass().getResource("support").getPath());
@@ -55,7 +61,6 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 		this.plugin = this.ruby.callMethod(pluginClass, "new", this);
 
 	}
-
 
 	public String read(String resource) {
 		InputStream stream = this.getClass().getResourceAsStream(resource);

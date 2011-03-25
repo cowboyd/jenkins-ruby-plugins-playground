@@ -11,4 +11,5 @@ public abstract class RubyXStreamConverter implements Converter {
 		System.out.printf("RubyXStreamConverter.canConvert(%s) -> %s\n", type, ("" + InternalJavaProxy.class.isAssignableFrom(type)));
 		return InternalJavaProxy.class.isAssignableFrom(type);
 	}
+
 }

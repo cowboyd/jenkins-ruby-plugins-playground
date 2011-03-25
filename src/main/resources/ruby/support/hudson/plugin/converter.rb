@@ -10,12 +10,10 @@ module Hudson
       end
 
       def marshal(source, writer, context)
-        puts "marshal:(#{source.inspect})"
 	    writer.setValue("\n" + source.unwrap.to_yaml)
 	  end
 
 	  def unmarshal(reader, context)
-        puts "unmarshal()"
         @plugin.export YAML.load(reader.getValue())
       end
 

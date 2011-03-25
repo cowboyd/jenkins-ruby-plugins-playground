@@ -21,6 +21,7 @@ module Hudson
         end
         converter = Hudson::Plugin::Converter.new(self)
         Java::HudsonModel::Hudson::XSTREAM.registerConverter(converter)
+        Java::HudsonModel::Items::XSTREAM.registerConverter(converter)
       end
 
       def start
@@ -44,6 +45,9 @@ module Hudson
             wrapper = Hudson::Plugin::Cloud::Wrapper.new(self, object)
             puts "wrapper created: #{wrapper}"
             return wrapper
+          when Hudson::Plugin::BuildWrapper
+            puts "it's a build wrapper, I'm going to wrap it"
+            wrapper = Hudson::Plugin::BuildWrapper::Wrapper.new(self, object)
           else object
         end
       end
