@@ -1,0 +1,14 @@
+<%
+l=taglib("/lib/layout")
+
+l.layout(:title=>"Hello from ERB") {
+    l.main_panel {
+%>
+        <h1>Hello from ERB</h1>
+        <p>
+          With proper Jenkins UI tags
+        </p>
+<%
+    }
+}
+%>
