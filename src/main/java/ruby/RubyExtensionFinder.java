@@ -4,6 +4,7 @@ package ruby;
 import hudson.Extension;
 import hudson.ExtensionComponent;
 import hudson.ExtensionFinder;
+import hudson.Util;
 import hudson.model.Descriptor;
 import hudson.model.Hudson;
 
@@ -16,13 +17,13 @@ public class RubyExtensionFinder extends ExtensionFinder {
 
 	@Override
 	public <T> Collection<ExtensionComponent<T>> find(Class<T> type, Hudson hudson) {
-		System.out.printf("RubyExtensionFinder.find(%s)\n",type);
-		if (Descriptor.class.isAssignableFrom(type)) {
-			Collection descriptors = RubyPlugin.getDescriptors();
-			return descriptors;
-		} else {
-			return new ArrayList<ExtensionComponent<T>>();
+		Collection<ExtensionComponent<T>> hits = new ArrayList<ExtensionComponent<T>>();
+		for (ExtensionComponent c: RubyPlugin.getExtensions()) {
+			if (type.isAssignableFrom(c.getInstance().getClass())) {
+				hits.add(c);
+			}
 		}
-
+		System.out.printf("RubyExtensionFinder.find(%s) -> %d extensions\n",type, hits.size());
+		return hits;
 	}
 }

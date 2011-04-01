@@ -20,6 +20,7 @@ import javax.servlet.ServletContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 
 @Extension
 @SuppressWarnings({"UnusedDeclaration"})
@@ -27,7 +28,7 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
     private ScriptingContainer ruby;
 
 	private Object plugin;
-	private ArrayList<ExtensionComponent<Descriptor>> descriptors;
+	private ArrayList<ExtensionComponent> extensions;
 
 	public static RubyPlugin get() {
 		return Hudson.getInstance().getPlugin(RubyPlugin.class);
@@ -36,12 +37,8 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 		return RubyPlugin.get().ruby.callMethod(object, methodName, args);
 	}
 
-	public void addDescriptor(Descriptor descriptor) {
-		descriptors.add(new ExtensionComponent<Descriptor>(descriptor));
-	}
-
-	public static ArrayList<ExtensionComponent<Descriptor>> getDescriptors() {
-		return get().descriptors;
+	public void addExtension(Object extension) {
+		extensions.add(new ExtensionComponent(extension));
 	}
 
 	public static String readf(String resource, Object... args) {
@@ -55,7 +52,7 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 		this.ruby.setClassLoader(this.getClass().getClassLoader());
 		this.ruby.getLoadPaths().add(0, this.getClass().getResource("support").getPath());
 		this.ruby.getLoadPaths().add(this.getClass().getResource(".").getPath());
-		this.descriptors = new ArrayList<ExtensionComponent<Descriptor>>();
+		this.extensions = new ArrayList<ExtensionComponent>();
 		this.ruby.runScriptlet("require 'hudson/plugin/controller'");
 		Object pluginClass = this.ruby.runScriptlet("Hudson::Plugin::Controller");
 		this.plugin = this.ruby.callMethod(pluginClass, "new", this);
@@ -95,6 +92,10 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 
 	public static String getResourceURI(String relativePathFormat, Object... args) {
 		return get().getClass().getResource(String.format(relativePathFormat, args)).getPath();
+	}
+
+	public static Collection<ExtensionComponent> getExtensions() {
+		return get().extensions;
 	}
 
 	@Extension

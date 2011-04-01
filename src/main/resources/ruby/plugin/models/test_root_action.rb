@@ -7,10 +7,10 @@ class TestRootAction < Hudson::Plugin::RootAction
     end
 
     def display_name
-        return "ERB Test"
+        "ERB Test - as a ruby object"
     end
 
     def url_name
-        return "erb"
+        "erb"
     end
 end
