@@ -6,7 +6,7 @@ import hudson.model.RootAction;
 /**
  * @author Kohsuke Kawaguchi
  */
-@Extension
+//@Extension
 public class TestRootAction implements RootAction {
     public String getIconFileName() {
         return "gear.png";
