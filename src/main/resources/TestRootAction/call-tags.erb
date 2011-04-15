@@ -1,10 +1,13 @@
 <% l = taglib("/lib/layout") %>
 <% l.layout(:title => "Hello from ERB") do %>
     <% l.main_panel do %>
-		<%= it %>
         <h1>Hello from ERB</h1>
         <p>
           With proper Jenkins UI tags
+          <b><%= it %></b>
         </p>
+        <script>
+          YUI.console("hello")
+        </script>
 	<% end %>
 <% end %>

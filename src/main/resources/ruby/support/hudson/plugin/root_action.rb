@@ -6,6 +6,7 @@ module Hudson
       class Wrapper
         include Java::HudsonModel::RootAction
         include Java::Ruby::SimpleGet
+        include Java::OrgKohsukeStapler::StaplerProxy
 
         def initialize(object)
           puts "Hudson::Plugin::RootAction::Wrapper.new(#{object})"
@@ -32,6 +33,9 @@ module Hudson
           @object.respond_to?(name) ? @object.send(name) : nil
         end
 
+        def getTarget()
+          @object
+        end
       end
 
     end
