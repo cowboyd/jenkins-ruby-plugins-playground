@@ -20,7 +20,7 @@ module Hudson
         def initialize(plugin, object)
           super()
           puts "Hudson::Plugin::BuildWrapper::Wrapper.new(#{plugin}, #{object})"
-          @plugin, @object = plugin, object
+          @object = object
         end
 
         def setUp(build, launcher, listener)
@@ -29,8 +29,12 @@ module Hudson
         end
 
         def getDescriptor
-          puts "object.class: #{@object.class} -> #{@plugin.descriptors[@object.class]}"
-          @plugin.descriptors[@object.class]
+          puts "object.class: #{@object.class} -> #{plugin.descriptors[@object.class]}"
+          plugin.descriptors[@object.class]
+        end
+
+        def plugin
+          Java::Ruby::RubyPlugin.getRubyController()
         end
 
         def unwrap

@@ -12,16 +12,12 @@ module Hudson
         @wrappers = {}
         require 'bundled-gems.jar'
         require 'rubygems'
-        require 'support/hudson/plugin/converter'
         script = 'support/hudson/plugin/models.rb'
         self.instance_eval @java.read(script), script
         DSL.new(self) do |dsl|
           script = @java.read("plugin.rb")
           dsl.instance_eval(script, "plugin.rb")
         end
-        converter = Hudson::Plugin::Converter.new(self)
-        Java::HudsonModel::Hudson::XSTREAM.registerConverter(converter)
-        Java::HudsonModel::Items::XSTREAM.registerConverter(converter)
       end
 
       def start

@@ -19,6 +19,11 @@
       <artifactId>jruby-complete</artifactId>
       <version>1.6.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci</groupId>
+      <artifactId>jruby-xstream</artifactId>
+      <version>1.0-SNAPSHOT</version>
+    </dependency>
   </dependencies>
 
 
@@ -32,6 +37,13 @@
 		  <id>codehaus</id>
 		  <url>http://repository.codehaus.org/</url>
 		</repository>
+        <repository>
+          <id>maven.jenkins-ci.org</id>
+          <url>http://maven.jenkins-ci.org/content/repositories/snapshots/</url>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
 	</repositories>
 
 

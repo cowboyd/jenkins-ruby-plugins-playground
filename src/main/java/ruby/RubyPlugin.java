@@ -1,5 +1,6 @@
 package ruby;
 
+import com.thoughtworks.xstream.XStream;
 import hudson.Extension;
 import hudson.ExtensionComponent;
 import hudson.Plugin;
@@ -7,8 +8,11 @@ import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.Hudson;
 import hudson.model.Items;
+import hudson.util.XStream2;
 import org.apache.commons.jelly.JellyException;
 import org.apache.commons.jelly.Script;
+import org.jenkinsci.jruby.JRubyMapper;
+import org.jenkinsci.jruby.JRubyXStream;
 import org.jruby.embed.LocalContextScope;
 import org.jruby.embed.ScriptingContainer;
 import org.jruby.javasupport.proxy.InternalJavaProxy;
@@ -33,6 +37,11 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 	public static RubyPlugin get() {
 		return Hudson.getInstance().getPlugin(RubyPlugin.class);
 	}
+
+    public static Object getRubyController() {
+        return get().plugin;
+    }
+
 	public static Object callMethod(Object object, String methodName, Object... args) {
 		return RubyPlugin.get().ruby.callMethod(object, methodName, args);
 	}
@@ -46,8 +55,6 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 	}
 
 	public RubyPlugin() {
-		Hudson.XSTREAM.aliasType("rubyobject", InternalJavaProxy.class);
-		Items.XSTREAM.aliasType("rubyobject", InternalJavaProxy.class);
 		this.ruby = new ScriptingContainer(LocalContextScope.SINGLETHREAD);
 		this.ruby.setClassLoader(this.getClass().getClassLoader());
 		this.ruby.getLoadPaths().add(0, this.getClass().getResource("support").getPath());
@@ -57,9 +64,18 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 		Object pluginClass = this.ruby.runScriptlet("Hudson::Plugin::Controller");
 		this.plugin = this.ruby.callMethod(pluginClass, "new", this);
 
+        register((XStream2)Hudson.XSTREAM, ruby);
+        register((XStream2)Items.XSTREAM, ruby);
 	}
 
-	public String read(String resource) {
+    private void register(XStream2 xs, ScriptingContainer ruby) {
+        JRubyXStream.register(xs,ruby);
+        synchronized (xs) {
+            xs.setMapper(new JRubyMapper(xs.getMapperInjectionPoint()));
+        }
+    }
+
+    public String read(String resource) {
 		InputStream stream = this.getClass().getResourceAsStream(resource);
 		try {
 			if (stream == null) {
