@@ -1,0 +1,3 @@
+[submodule "src/main/resources/ruby/jenkins-plugins"]
+	path = src/main/resources/ruby/jenkins-plugins
+	url = https://github.com/cowboyd/jenkins-plugins.rb.git
