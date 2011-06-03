@@ -6,3 +6,4 @@ target/
 work/
 vendor/
 .bundle
+.rvmrc
