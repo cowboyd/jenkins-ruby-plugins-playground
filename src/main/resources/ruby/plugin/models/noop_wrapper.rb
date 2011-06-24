@@ -1,11 +1,8 @@
 
-require 'hudson/plugin/build_wrapper'
 
-class NoopWrapper < Hudson::Plugin::BuildWrapper
+class NoopWrapper < Jenkins::Tasks::BuildWrapper
 
-  def self.display_name
-    "The Amazing Noop Wrapper"
-  end
+  display_name "The Amazing Noop Wrapper"
 
   def setup(*args)
     puts "Hello from the NoopWrapper: (#{args.inspect})"

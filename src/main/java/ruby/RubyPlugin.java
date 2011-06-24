@@ -119,7 +119,9 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 		this.ruby.getLoadPaths().add(this.getClass().getResource("jenkins-plugins/lib").getPath());
 		this.ruby.getLoadPaths().add(this.getClass().getResource(".").getPath());
 		this.extensions = new ArrayList<ExtensionComponent>();
-		this.ruby.runScriptlet("require 'jenkins/plugin'");
+		this.ruby.runScriptlet("require 'rubygems'");
+		this.ruby.runScriptlet("require 'bundled-gems.jar'");
+		this.ruby.runScriptlet("require 'jenkins/plugins'");
 		Object pluginClass = this.ruby.runScriptlet("Jenkins::Plugin");
 		this.plugin = this.ruby.callMethod(pluginClass, "new", this);
 
