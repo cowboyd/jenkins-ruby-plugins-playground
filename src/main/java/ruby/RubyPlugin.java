@@ -21,17 +21,17 @@ import java.util.Collection;
 
 /**
  * The primary Java interface to a plugin which is implemented in Ruby
- *
+ * <p/>
  * When this plugin initializes, it will instantiate a Jenkins::Plugin
  * object which acts as the gateway for Ruby to interact with the java
  * side.
- *
+ * <p/>
  * When the RubyPlugin is loaded, it will discover, load and provide
  * a mechanism for extensions written in Ruby that it contains to register
  * themselves.
- *
+ * <p/>
  * These Extensions are presented to Jenkins via the {@link RubyExtensionFinder}
- *
+ * <p/>
  * Each plugin has its own JRuby environment
  */
 @SuppressWarnings({"UnusedDeclaration"})
@@ -41,7 +41,7 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 	 * The unique JRuby environment used by this plugin and all the objects
 	 * and classes that it contains.
 	 */
-    private ScriptingContainer ruby;
+	private ScriptingContainer ruby;
 
 
 	private Object plugin;
@@ -55,19 +55,20 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 	 * Kinda acts like the "agent" of this ruby plugin in the Ruby world.
 	 * This is the object that the internals of the ruby side talk to when
 	 * then want to talk back to Java.
+	 *
 	 * @return an instance of Jenkins::Plugin
 	 */
-    public static Object getRubyController() {
-        return get().plugin;
-    }
+	public static Object getRubyController() {
+		return get().plugin;
+	}
 
 	/**
 	 * invokes a Ruby method on the specified object in the context of this plugin's
 	 * {@link ScriptingContainer}
 	 *
-	 * @param object <b>JRuby</b> object to use as invocant
+	 * @param object     <b>JRuby</b> object to use as invocant
 	 * @param methodName the method to end
-	 * @param args arguments to the method
+	 * @param args       arguments to the method
 	 * @return the return value of the method call.
 	 */
 	public static Object callMethod(Object object, String methodName, Object... args) {
@@ -76,9 +77,10 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 
 	/**
 	 * Registers an extenion with this Ruby plugin so that it will be found later on
-	 *
+	 * <p/>
 	 * This method is generally called from inside Ruby, as objects that implement
 	 * extension points register themselves.
+	 *
 	 * @param extension
 	 */
 	public void addExtension(Object extension) {
@@ -87,7 +89,7 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 
 	/**
 	 * @return the list of extensions registered with this Plugin. this is used by
-	 * the {@link RubyExtensionFinder} to present extension points to Jenkins
+	 *         the {@link RubyExtensionFinder} to present extension points to Jenkins
 	 */
 	public static Collection<ExtensionComponent> getExtensions() {
 		return get().extensions;
@@ -95,8 +97,9 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 
 	/**
 	 * Reads a resource relative to this plugin's Java class using a formatted string
+	 *
 	 * @param resource the string template specifying the resource
-	 * @param args format arguments
+	 * @param args     format arguments
 	 * @return the content of the resource
 	 */
 	public static String readf(String resource, Object... args) {
@@ -108,7 +111,7 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 	 * and then loading up the ruby side of the plugin by creating an
 	 * instance of the Ruby class Jenkins::Plugin which will serve as
 	 * its agent in the Ruby world.
-	 *
+	 * <p/>
 	 * We also register xstream mappers for JRuby objects so that they
 	 * can be persisted along with other objects in Jenkins.
 	 */
@@ -125,23 +128,24 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 		Object pluginClass = this.ruby.runScriptlet("Jenkins::Plugin");
 		this.plugin = this.ruby.callMethod(pluginClass, "new", this);
 
-        register((XStream2)Hudson.XSTREAM, ruby);
-        register((XStream2)Items.XSTREAM, ruby);
+		register((XStream2) Hudson.XSTREAM, ruby);
+		register((XStream2) Items.XSTREAM, ruby);
 	}
 
-    private void register(XStream2 xs, ScriptingContainer ruby) {
-        JRubyXStream.register(xs,ruby);
-        synchronized (xs) {
-            xs.setMapper(new JRubyMapper(xs.getMapperInjectionPoint()));
-        }
-    }
+	private void register(XStream2 xs, ScriptingContainer ruby) {
+		JRubyXStream.register(xs, ruby);
+		synchronized (xs) {
+			xs.setMapper(new JRubyMapper(xs.getMapperInjectionPoint()));
+		}
+	}
 
 	/**
 	 * Read a resource relative to this plugin clas
+	 *
 	 * @param resource the name of the resource to be read
 	 * @return the content of the resource
 	 */
-    public String read(String resource) {
+	public String read(String resource) {
 		InputStream stream = this.getClass().getResourceAsStream(resource);
 		try {
 			if (stream == null) {
@@ -149,7 +153,7 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 			}
 			StringBuffer buffer = new StringBuffer();
 			for (int c = stream.read(); c > 0; c = stream.read()) {
-				buffer.append((char)c);
+				buffer.append((char) c);
 			}
 			return buffer.toString();
 		} catch (IOException e) {
@@ -161,17 +165,19 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 	 * Jenkins will call this method whenever the plugin is initialized
 	 * The plugin will in turn delegate to its instance of Jenkins::Plugin
 	 * which can take action on the Ruby side.
+	 *
 	 * @throws Exception
 	 */
 	@Override
-    public void start() throws Exception {
-        this.ruby.callMethod(plugin, "start");
-    }
+	public void start() throws Exception {
+		this.ruby.callMethod(plugin, "start");
+	}
 
 	/**
 	 * Jenkins will call this method whenever the plugin is shut down
 	 * The plugin will in turn delegate to its instance of Jenkins::Plugin
 	 * which can take action on the Ruby side
+	 *
 	 * @throws Exception
 	 */
 	@Override
@@ -183,11 +189,12 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 	/**
 	 * This is mandatory for Jenkins to find this plugin, although I'm not
 	 * exactly sure why.
+	 *
 	 * @return
 	 */
-    public DescriptorImpl getDescriptor() {
-        return (DescriptorImpl)Hudson.getInstance().getDescriptorOrDie(getClass());
-    }
+	public DescriptorImpl getDescriptor() {
+		return (DescriptorImpl) Hudson.getInstance().getDescriptorOrDie(getClass());
+	}
 
 	public static String getResourceURI(String relativePathFormat, Object... args) {
 		return get().getClass().getResource(String.format(relativePathFormat, args)).getPath();
@@ -198,10 +205,10 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 	 * exactly sure why.
 	 */
 	@Extension
-    public static final class DescriptorImpl extends Descriptor<RubyPlugin> {
-        @Override
-        public String getDisplayName() {
-            return "Ruby Plugin";
-        }
-    }
+	public static final class DescriptorImpl extends Descriptor<RubyPlugin> {
+		@Override
+		public String getDisplayName() {
+			return "Ruby Plugin";
+		}
+	}
 }

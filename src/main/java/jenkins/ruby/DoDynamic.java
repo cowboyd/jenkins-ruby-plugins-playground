@@ -1,4 +1,4 @@
-package ruby;
+package jenkins.ruby;
 
 
 import org.kohsuke.stapler.StaplerRequest;
@@ -12,7 +12,7 @@ import org.kohsuke.stapler.StaplerResponse;
  * method exists and if so, dispatch it via that method.
  */
 
-public interface RubyDoDynamic {
+public interface DoDynamic {
 
 	void doDynamic(StaplerRequest request, StaplerResponse response);
 }

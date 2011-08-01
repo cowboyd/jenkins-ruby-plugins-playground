@@ -1,4 +1,4 @@
-package ruby;
+package jenkins.ruby;
 
 
 /**
@@ -12,7 +12,7 @@ package ruby;
  *
  * JRuby proxies include this interface to support this.
  */
-public interface SimpleGet {
+public interface Get {
 
 	Object get(String name);
 }
