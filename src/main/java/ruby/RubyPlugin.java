@@ -1,8 +1,10 @@
 package ruby;
 
+import com.sun.source.tree.EnhancedForLoopTree;
 import hudson.Extension;
 import hudson.ExtensionComponent;
 import hudson.Plugin;
+import hudson.PluginWrapper;
 import hudson.model.Describable;
 import hudson.model.Descriptor;
 import hudson.model.Hudson;
@@ -15,8 +17,7 @@ import org.jruby.embed.ScriptingContainer;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
 
 /**
@@ -120,10 +121,16 @@ public class RubyPlugin extends Plugin implements Describable<RubyPlugin> {
 		this.ruby.setClassLoader(this.getClass().getClassLoader());
 		this.ruby.getLoadPaths().add(0, this.getClass().getResource("support").getPath());
 		this.ruby.getLoadPaths().add(this.getClass().getResource("jenkins-plugins/lib").getPath());
-		this.ruby.getLoadPaths().add(this.getClass().getResource(".").getPath());
+		Map<String, String> env = this.ruby.getEnvironment();
+		Map enhanced = new HashMap<String, String>();
+		for (Map.Entry<String, String> entry : env.entrySet()) {
+			enhanced.put(entry.getKey(), entry.getValue());
+		}
+		enhanced.put("GEM_PATH", this.getClass().getResource("vendor/gems/jruby/1.8").getPath());
+		this.ruby.setEnvironment(enhanced);
 		this.extensions = new ArrayList<ExtensionComponent>();
 		this.ruby.runScriptlet("require 'rubygems'");
-		this.ruby.runScriptlet("require 'bundled-gems.jar'");
+		//this.ruby.runScriptlet("require 'bundled-gems.jar'");
 		this.ruby.runScriptlet("require 'jenkins/plugins'");
 		Object pluginClass = this.ruby.runScriptlet("Jenkins::Plugin");
 		this.plugin = this.ruby.callMethod(pluginClass, "new", this);
